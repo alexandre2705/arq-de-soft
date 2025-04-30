@@ -1,0 +1,52 @@
+-- Tabela para Administradores
+CREATE TABLE administradores (
+    id UUID PRIMARY KEY,
+    nome VARCHAR(150) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    senha VARCHAR(255) NOT NULL -- Assumindo tamanho suficiente para hash da senha
+);
+
+-- Tabela para Equipamentos
+CREATE TABLE equipments (
+    id UUID PRIMARY KEY,
+    name VARCHAR(100) NOT NULL
+    -- Campos comentados na entidade Java não foram incluídos
+);
+
+-- Tabela para Espaços
+CREATE TABLE espacos (
+    id UUID PRIMARY KEY,
+    sigla VARCHAR(10) NOT NULL UNIQUE,
+    nome VARCHAR(100) NOT NULL,
+    descricao VARCHAR(255),
+    capacidade INTEGER NOT NULL,
+    status VARCHAR(20) NOT NULL DEFAULT 'DISPONIVEL' -- Mapeado do Enum StatusEspaco
+);
+
+-- Tabela para Professores
+CREATE TABLE professores (
+    id UUID PRIMARY KEY,
+    nome VARCHAR(150) NOT NULL,
+    escola VARCHAR(100) NOT NULL
+);
+
+-- Tabela para Reservas
+CREATE TABLE reservas (
+    id UUID PRIMARY KEY,
+    espaco_id UUID NOT NULL,
+    professor_id UUID NOT NULL,
+    data_reserva DATE NOT NULL,
+    hora_inicio TIME NOT NULL,
+    hora_fim TIME NOT NULL,
+    data_hora_solicitacao TIMESTAMP NOT NULL,
+    confirmada BOOLEAN NOT NULL DEFAULT FALSE,
+    utilizada BOOLEAN NOT NULL DEFAULT FALSE,
+    FOREIGN KEY (espaco_id) REFERENCES espacos(id),
+    FOREIGN KEY (professor_id) REFERENCES professores(id)
+);
+
+-- Nota: A estratégia de geração de ID (UUID) definida no Java (@GeneratedValue)
+-- geralmente é gerenciada pela aplicação (JPA). O script SQL acima assume que
+-- a aplicação irá fornecer os UUIDs durante a inserção. Se precisar que o
+-- banco gere os UUIDs automaticamente, a definição da chave primária
+-- precisaria ser ajustada (ex: DEFAULT gen_random_uuid(), requerendo a extensão pgcrypto).
